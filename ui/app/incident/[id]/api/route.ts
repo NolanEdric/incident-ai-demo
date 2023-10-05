@@ -1,10 +1,14 @@
-export async function POST({ params }: { params: { id: string } }) {
-    // 1st
-    // save file to files/bid.extension
-    // save metadata to db
-    // no id -> create new
-}
+import { delRecord } from "@/lib/crud";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE({ params }: { params: { id: string } }) {
-    // delete by id
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const delRes = await delRecord(params.id);
+  if (delRes) {
+    return new Response("delete successful");
+  }
+
+  return new Response("delete error", {
+    status: 500
+  });
 }
