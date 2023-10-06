@@ -45,6 +45,15 @@ export async function POST(req: NextRequest) {
         throw new Error("fail to update record");
       }
     });
+  } else {
+    i.nearMissType = data.get('nearMissType')?.toString() || null;
+    i.concernType = data.get('concernType')?.toString() || null;
+    i.inference = data.get('inference')?.toString() || null;
+    i.dateTime = data.get('dateTime')?.toString() || null;
+    const updateRes = await updateRecord(i);
+    if (!updateRes || updateRes.modifiedCount === 0) {
+      throw new Error("fail to update record");
+    }
   }
   return new Response();
 }
