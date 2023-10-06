@@ -4,10 +4,14 @@ services:
   ui:
     build: 
       context: ui
-    ports:
-      - 8080:80
+    # ports:
+      # - 8080:80
+    extra_hosts:
+      - host.docker.internal:host-gateway
     env_file:
-      - ui/.env
+      - .env.server
+    volumes:
+      - ./assets/assets
 
   mongo:
     image: mongo
