@@ -90,8 +90,9 @@ async function submit(
       data.set("audio", "");
     }
     data.set("id", i.id ? i.id : "");
-    data.set("nearMissType", i.nearMissType ? i.nearMissType : "");
-    data.set("concernType", i.concernType ? i.concernType : "");
+    data.set("title", i.title ? i.title : "Untitled");
+    data.set("nearMissType", i.nearMissType ? i.nearMissType : "Near Miss");
+    data.set("concernType", i.concernType ? i.concernType : "Unsafe Act");
     data.set("dateTime", i.dateTime ? i.dateTime : new Date().toISOString());
     data.set("inference", i.inference ? i.inference : "");
 
@@ -171,7 +172,7 @@ export default function Form({ incident }: { incident: Incident }) {
     <>
       <div className="p-5">
         <div className="flex justify-center">
-          <div className="w-full sm:w-1/2">
+          <div className="w-full sm:w-1/2" ref={inputContainerRef}>
             <div className="mb-5 flex justify-left">
               <a
                 href="/"
@@ -181,130 +182,150 @@ export default function Form({ incident }: { incident: Incident }) {
               </a>
             </div>
             <form>
-              <div className="my-5 flex justify-center">
+              <div className="mt-5 flex justify-center">
                 <h1 className="text-xl font-semibold leading-7 text-gray-900">
                   Incident Reporting
                 </h1>
               </div>
-              <div className="my-5">
-                <label
-                  htmlFor="id"
-                  className="block text-base font-medium leading-6 text-gray-900"
-                >
-                  ID
-                </label>
-                <div className="mt-2">
-                  <div
-                    className="flex rounded shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 w-full"
-                    ref={inputContainerRef}
-                  >
-                    <input
-                      type="text"
-                      name="type of near miss"
-                      id="id"
-                      disabled
-                      className="block flex-1 border-gray-300 rounded bg-gray-50 p-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
-                      value={getIncident.id || ""}
-                    />
+              <div className="flex md:flex-row flex-col">
+                <div className="w-full flex justify-start">
+                  <div className="md:w-11/12 w-full mt-5">
+                    <label
+                      htmlFor="id"
+                      className="block text-base font-medium leading-6 text-gray-900"
+                    >
+                      Title
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 w-full">
+                        <input
+                          type="text"
+                          name="title"
+                          id="title"
+                          className="block flex-1 border-gray-300 rounded bg-gray-50 p-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
+                          value={getIncident.title ? getIncident.title : ""}
+                          onChange={(e) => {
+                            setIncident({
+                              ...getIncident,
+                              title: e.target.value,
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full flex justify-start">
+                  <div className="md:w-11/12 w-full mt-5">
+                    <label
+                      htmlFor="id"
+                      className="block text-base font-medium leading-6 text-gray-900"
+                    >
+                      Date time
+                    </label>
+                    <div className="mt-2">
+                      <DateTimePicker
+                        className="bg-gray-50"
+                        required
+                        value={
+                          getIncident.dateTime
+                            ? getIncident.dateTime
+                            : new Date()
+                        }
+                        onChange={(e: any) => {
+                          if (e) {
+                            setIncident({
+                              ...getIncident,
+                              dateTime: e?.toISOString(),
+                            });
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="my-5">
-                <label
-                  htmlFor="id"
-                  className="block text-base font-medium leading-6 text-gray-900"
-                >
-                  Date time
-                </label>
-                <div className="mt-2">
-                  <DateTimePicker
-                    className="bg-gray-50"
-                    required
-                    value={
-                      getIncident.dateTime ? getIncident.dateTime : new Date()
-                    }
-                    onChange={(e: any) => {
-                      if (e) {
-                        setIncident({
-                          ...getIncident,
-                          dateTime: e?.toISOString(),
-                        });
-                      }
-                    }}
-                  />
+              <div className="flex md:flex-row flex-col">
+                <div className="w-full flex justify-start">
+                  <div className="md:w-11/12 w-full mt-5">
+                    <label
+                      htmlFor="nearmisstype"
+                      className="block text-base font-medium leading-6 text-gray-900"
+                    >
+                      Type of Near Miss
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 w-full">
+                        <input
+                          type="text"
+                          name="nearmisstype"
+                          list="nearmisstypelist"
+                          id="nearmisstype"
+                          className="block flex-1 border-gray-300 rounded bg-gray-50 p-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
+                          placeholder="type of near miss"
+                          value={
+                            getIncident.nearMissType
+                              ? getIncident.nearMissType
+                              : ""
+                          }
+                          onChange={(e) => {
+                            setIncident({
+                              ...getIncident,
+                              nearMissType: e.target.value,
+                            });
+                          }}
+                        />
+                        <datalist id="nearmisstypelist">
+                          <option value="Near Miss" />
+                          <option value="Safety Concern" />
+                          <option value="Safety Idea/Suggestion" />
+                        </datalist>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="my-5">
-                <label
-                  htmlFor="nearmisstype"
-                  className="block text-base font-medium leading-6 text-gray-900"
-                >
-                  Type of Near Miss
-                </label>
-                <div className="mt-2">
-                  <div className="flex rounded shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 w-full">
-                    <input
-                      type="text"
-                      name="nearmisstype"
-                      list="nearmisstypelist"
-                      id="nearmisstype"
-                      className="block flex-1 border-gray-300 rounded bg-gray-50 p-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
-                      placeholder="type of near miss"
-                      value={
-                        getIncident.nearMissType ? getIncident.nearMissType : ""
-                      }
-                      onChange={(e) => {
-                        setIncident({
-                          ...getIncident,
-                          nearMissType: e.target.value,
-                        });
-                      }}
-                    />
-                    <datalist id="nearmisstypelist">
-                      <option value="Near Miss" />
-                      <option value="Safety Concern" />
-                      <option value="Safety Idea/Suggestion" />
-                    </datalist>
+                <div className="w-full flex justify-start">
+                  <div className="md:w-11/12 w-full mt-5">
+                    <label
+                      htmlFor="concerntype"
+                      className="block text-base font-medium leading-6 text-gray-900"
+                    >
+                      Type of Concern
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 w-full">
+                        <input
+                          type="text"
+                          name="concerntype"
+                          list="concerntypelist"
+                          id="concerntype"
+                          className="block flex-1 border-gray-300 rounded bg-gray-50 p-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
+                          placeholder="type of concern"
+                          value={
+                            getIncident.concernType
+                              ? getIncident.concernType
+                              : ""
+                          }
+                          onChange={(e) => {
+                            setIncident({
+                              ...getIncident,
+                              concernType: e.target.value,
+                            });
+                          }}
+                        />
+                        <datalist id="concerntypelist">
+                          <option value="Unsafe Act" />
+                          <option value="Unsafe Condition of Area" />
+                          <option value="Unsafe Condition of Equipment" />
+                          <option value="Unsafe Use of Equipment" />
+                          <option value="Safety Policy Violation" />
+                        </datalist>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="my-5">
-                <label
-                  htmlFor="concerntype"
-                  className="block text-base font-medium leading-6 text-gray-900"
-                >
-                  Type of Concern
-                </label>
-                <div className="mt-2">
-                  <div className="flex rounded shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 w-full">
-                    <input
-                      type="text"
-                      name="concerntype"
-                      list="concerntypelist"
-                      id="concerntype"
-                      className="block flex-1 border-gray-300 rounded bg-gray-50 p-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
-                      placeholder="type of concern"
-                      value={
-                        getIncident.concernType ? getIncident.concernType : ""
-                      }
-                      onChange={(e) => {
-                        setIncident({
-                          ...getIncident,
-                          concernType: e.target.value,
-                        });
-                      }}
-                    />
-                    <datalist id="concerntypelist">
-                      <option value="Unsafe Act" />
-                      <option value="Unsafe Condition of Area" />
-                      <option value="Unsafe Condition of Equipment" />
-                      <option value="Unsafe Use of Equipment" />
-                      <option value="Safety Policy Violation" />
-                    </datalist>
-                  </div>
-                </div>
-              </div>
-              <div className="my-5">
+              <div className="mt-5">
                 <label className="block text-base font-medium leading-6 text-gray-900">
                   Describe incident by voice
                 </label>
@@ -455,14 +476,13 @@ export default function Form({ incident }: { incident: Incident }) {
                   </div>
                 )}
               </div>
-              <div className="my-5">
+              <div className="mt-5">
                 <AiInferResult
-                  width={width.toString()}
                   incident={getIncident}
-                  loading={inferenceLoading}
+                  inferenceLoading={inferenceLoading}
                 />
               </div>
-              <div className="my-5 flex justify-around">
+              <div className="mt-5 flex justify-around">
                 <button
                   type="submit"
                   onClick={(e) => submit(e, getIncident, "submit")}

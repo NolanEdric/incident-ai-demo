@@ -9,6 +9,7 @@ export default async function F({incident, width}: {incident: Incident, width: n
       trackHeight={50}
       showLoopOption={false}
       key={incident.id}
+      minimal
     />
   )
 }

@@ -8,16 +8,43 @@ import {
   AccordionItemPanel,
 } from "react-accessible-accordion";
 import Iframe from "react-iframe";
-import { RingLoader } from "react-spinners";
-import DataTable from "react-data-table-component";
+import { RingLoader, GridLoader } from "react-spinners";
+
+function countLines(str: String) {
+  return (String(str).match(/\n/g) || "").length + 1;
+}
 
 const docData = {
-  text: "Ed O'Kelley was the man who shot the man who shot Jesse James.",
+  text: "エチレン製造装置のエタン分解炉のデコーキング作業が終了し、分解炉へエタンの供給を開始した。\nしばらくして分解炉出口温度の異常が表示されたので現場を確認したところ、分解炉からクエンチボイラーに至る配管のエルボ溶接部から炎が噴き出していた。\n調査の結果、分解炉内の輻射コイルには熱膨張を吸収するガイドスリーブが取り付けられているが、この中にスケールが詰まっていたため固定状態となり、配管に熱膨張による過大な曲げモーメントが作用し亀裂が入ったもの。",
   entities: [
-    ["T1", "Person", [[0, 11]]],
-    ["T2", "Person", [[20, 23]]],
-    ["T3", "Person", [[37, 40]]],
-    ["T4", "Person", [[50, 61]]],
+    ["T1", "Product", [[0, 4]]],
+    ["T2", "Storage", [[0, 8]]],
+    ["T3", "Product", [[9, 12]]],
+    ["T4", "Storage", [[9, 15]]],
+    ["T5", "Process", [[16, 24]]],
+    ["T6", "Storage", [[29, 32]]],
+    ["T7", "Product", [[33, 36]]],
+    ["T8", "Process", [[37, 39]]],
+    ["T9", "Storage", [[52, 55]]],
+    ["T10", "Incident", [[60, 62]]],
+    ["T11", "Storage", [[81, 84]]],
+    ["T12", "Storage", [[86, 94]]],
+    ["T13", "Storage", [[97, 99]]],
+    ["T14", "Storage", [[100, 103]]],
+    ["T15", "Incident", [[108, 109]]],
+    ["T16", "Test", [[119, 121]]],
+    ["T17", "Storage", [[125, 128]]],
+    ["T18", "Storage", [[130, 135]]],
+    ["T19", "Incident", [[137, 140]]],
+    ["T20", "Storage", [[145, 152]]],
+    ["T21", "Incident", [[168, 172]]],
+    ["T22", "Incident", [[181, 185]]],
+    ["T23", "Storage", [[189, 191]]],
+    ["T24", "Incident", [[192, 195]]],
+    ["T25", "Incident", [[201, 208]]],
+    ["T26", "Incident", [[212, 214]]],
+    ["T27", "Event_others", [[52, 117]]],
+    ["T28", "Cause", [[125, 220]]],
   ],
 };
 
@@ -32,14 +59,24 @@ function injectData(iframe_id: string, inference: string) {
   }
 }
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height,
+  };
+}
+
+function convertRemToPixels(rem: number) {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
 export default function AiInferResult({
   incident,
-  width,
-  loading,
+  inferenceLoading,
 }: {
   incident: Incident;
-  width: string;
-  loading: boolean;
+  inferenceLoading: boolean;
 }) {
   const ASRCustomStyles = {
     headCells: {
@@ -68,21 +105,65 @@ export default function AiInferResult({
     },
   ];
 
+  const [windowDimensions, setWindowDimensions] = React.useState(
+    getWindowDimensions()
+  );
+  let [stillMounting, setStillMounting] = React.useState(true);
+
+  React.useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  React.useEffect(() => {
+    if (!inferenceLoading) {
+      if (!stillMounting) {
+        setStillMounting(true);
+      }
+      let timer = setTimeout(() => setStillMounting(false), 3000);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [inferenceLoading]);
+
   return (
     <>
-      {loading ? (
-        <div className="flex justify-center">
+      {inferenceLoading ? (
+        <div className="flex flex-col items-center">
+          <div className="mb-5 text-sm">Running AI ...</div>
           <RingLoader color="#36d7b7" />
         </div>
       ) : (
         incident &&
         incident.inference && (
-          <div>
-            <label className="block text-base font-medium leading-6 text-gray-900">
-              Incident AI infererence results
-            </label>
-            <Accordion allowZeroExpanded allowMultipleExpanded className="my-2">
-              <AccordionItem className="border-gray-500 border-2 rounded my-2">
+          <>
+            {stillMounting && (
+              <div className="flex flex-col items-center">
+                <div className="mb-5 text-sm">Visualizing ...</div>
+                <GridLoader color="#36d7b7" />
+              </div>
+            )}
+            <div style={{ display: !stillMounting ? "block" : "none" }}>
+              <label className="block text-base font-medium leading-6 text-gray-900">
+                AI output
+              </label>
+              <Iframe
+                url="/brat/brat.html"
+                width={String(windowDimensions.width - convertRemToPixels(2.5))}
+                height={String(countLines(docData.text) * 75)}
+                className="custom-pushback"
+                id="result-iframe"
+                onLoad={() =>
+                  injectData("result-iframe", incident.inference || "")
+                }
+              />
+              {/* <Accordion allowZeroExpanded allowMultipleExpanded className="my-2"> */}
+              {/* <AccordionItem className="border-gray-500 border-2 rounded my-2">
                 <AccordionItemHeading>
                   <AccordionItemButton className="bg-orange-300 p-2">
                     ASR
@@ -117,26 +198,20 @@ export default function AiInferResult({
                     }
                   />
                 </AccordionItemPanel>
-              </AccordionItem>
-              <AccordionItem className="border-gray-500 border-2 rounded my-2">
+              </AccordionItem> */}
+              {/* <AccordionItem className="border-gray-500 border-2 rounded my-2">
                 <AccordionItemHeading>
                   <AccordionItemButton className="bg-emerald-300 p-2">
-                    CE
+                    Result
                   </AccordionItemButton>
                 </AccordionItemHeading>
                 <AccordionItemPanel>
-                  <Iframe
-                    url="/brat/ce.html"
-                    width={width}
-                    id="ce-iframe"
-                    onLoad={() =>
-                      injectData("ce-iframe", incident.inference || "")
-                    }
-                  />
+                  
                 </AccordionItemPanel>
               </AccordionItem>
-            </Accordion>
-          </div>
+            </Accordion> */}
+            </div>
+          </>
         )
       )}
     </>

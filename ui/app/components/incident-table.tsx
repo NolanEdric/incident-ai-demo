@@ -20,8 +20,8 @@ export default function Table({ incidentList }: { incidentList: Incident[] }) {
   }, []);
   const columns = [
     {
-      name: "ID",
-      selector: (i: Incident) => i.id || "",
+      name: "Title",
+      selector: (i: Incident) => i.title || "",
     },
     {
       name: "At",

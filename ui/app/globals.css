@@ -25,3 +25,10 @@ body {
     )
     rgb(var(--background-start-rgb));
 } */
+
+
+@media (min-width: 640px) {
+  .custom-pushback {
+    margin-left: -50%;
+  }
+}

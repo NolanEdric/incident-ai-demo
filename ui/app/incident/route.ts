@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
       }
       await writeFile(path, buffer);
       i.audio = `/incident/${i.id}/api/audio?ext=${file.name}`;
+      i.title = data.get('title')?.toString() || null;
       i.nearMissType = data.get('nearMissType')?.toString() || null;
       i.concernType = data.get('concernType')?.toString() || null;
       i.inference = data.get('inference')?.toString() || null;
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest) {
       }
     });
   } else {
+    i.title = data.get('title')?.toString() || null;
     i.nearMissType = data.get('nearMissType')?.toString() || null;
     i.concernType = data.get('concernType')?.toString() || null;
     i.inference = data.get('inference')?.toString() || null;

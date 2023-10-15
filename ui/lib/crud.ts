@@ -15,10 +15,11 @@ export async function addRecord(): Promise<Incident | undefined> {
     const i = new Incident();
     const c = await db_col();
     const res = await c.insertOne({
-      concernType: i.concernType,
-      nearMissType: i.nearMissType,
+      title: i.title || "Untitled",
+      concernType: i.concernType || "Unsafe Act",
+      nearMissType: i.nearMissType || "Near Miss",
       audio: i.audio,
-      dateTime: i.dateTime,
+      dateTime: i.dateTime || new Date().toISOString(),
       inference: i.inference,
     });
     i.id = res.insertedId.toHexString();
@@ -38,6 +39,7 @@ export async function updateRecord(i: Incident): Promise<any> {
         {
           $set: {
             audio: i.audio,
+            title: i.title,
             concernType: i.concernType,
             nearMissType: i.nearMissType,
             dateTime: i.dateTime,
@@ -62,6 +64,7 @@ export async function getRecord(id: string | null): Promise<Incident | undefined
         const i = new Incident();
         i.id = id;
         i.audio = res.audio;
+        i.title = res.title;
         i.concernType = res.concernType;
         i.nearMissType = res.nearMissType;
         i.dateTime = res.dateTime;
@@ -102,6 +105,7 @@ export async function listRecord(): Promise<Incident[]> {
       const i = new Incident();
       i.id = r._id.toHexString();
       i.audio = r.audio;
+      i.title = r.title;
       i.concernType = r.concernType;
       i.nearMissType = r.nearMissType;
       i.dateTime = r.dateTime;
