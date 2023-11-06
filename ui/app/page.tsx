@@ -13,7 +13,7 @@ export default async function List() {
               </button>
             </a> */}
             {/* <IncidentTable incidentList={await listRecord()} /> */}
-            Due to cost reason, the server will only run from 9AM - 5PM Japan time (GMT+9) or 0 - 8AM GMT.
+            Due to cost reason, the server will only run on Monday - Friday from 9AM - 5PM Japan time (GMT+9) or 0 - 8AM GMT
             <br />
             If you see this message, please comeback within the running timeframe of the server.
             <br />
