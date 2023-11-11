@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   const i = new Incident();
   i.id = data.get('id')?.toString() || null;
   const file: File | null = data.get('audio') as unknown as File;
-  const path = `${audio_storage_path}/${i.id}.${file.name}`;
+  const path = `${audio_storage_path}/${i.id}.${file.type.split("/")[1]}`;
 
   if (file) {
     await del([`${audio_storage_path}/${i.id}.*`], async function (err: any, deleted: any) {

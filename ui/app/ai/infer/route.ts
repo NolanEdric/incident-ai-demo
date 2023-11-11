@@ -246,9 +246,8 @@ export async function POST(req: NextRequest) {
       },
       body: dataToPost
     });
-    await unlink(path);
     const json = await res.json();
-
+    
     return new Response(JSON.stringify(json), {
       status: res.status,
       statusText: res.statusText
@@ -258,7 +257,13 @@ export async function POST(req: NextRequest) {
     return new Response("error invoking ai", {
       status: 500
     });
-
+  } finally {
+    try {
+      await unlink(path);
+    } catch (e) {
+      console.log(e);
+      console.log(`Can't delete file: ${path}`)
+    }
   }
 
   // await new Promise(resolve => setTimeout(resolve, 5000));
