@@ -60,8 +60,8 @@ func main() {
 		}
 	}
 
-	const portNum string = ":8080"
-	log.Println("Started on port", portNum)
+	const portNum string = "0.0.0.0:8080"
+	log.Println("Started on ", portNum)
 	fmt.Println("To close connection CTRL+C :-)")
 	http.HandleFunc("/", handler())
 	err := http.ListenAndServe(portNum, nil)
