@@ -1,110 +1,264 @@
+import { ai_service } from "@/lib/check-env";
+import { unlink, writeFile } from "fs/promises";
 import { NextRequest } from "next/server";
 
 const mock_res = {
-  "job_id": "1",
-  "metadata": {
-    "version": "v3.0.3",
-    "product_line": "rossa"
-  },
-  "error_code": "",
-  "error_message": "",
-  "result": [
+  "ann_ce_list": [
     {
-      "start": 0.43,
-      "end": 10.43,
-      "transcript": "で、恋の話なんですけど、私の話ではなく、もちろん、あのね、塾公のことなんだけど、中二の子たち持ってて、中二ってこう微妙な歳じゃない?"
+      "_id": "T28",
+      "end": 116,
+      "start": 51,
+      "text": "分解炉出口温度の異常が表示されたので現場を確認したところ、分解炉からクエンチボイラーに至る配管のエルボ溶接部から炎が噴き出していた",
+      "type": "Event_others"
     },
     {
-      "start": 10.43,
-      "end": 22.43,
-      "transcript": "で、なんか国語担当してて、文学を教えるときに、例えば、宇野千代が出てきたらさ、もう宇野千代の恋愛演劇について多少学を研究しなきゃいけないとか、"
-    },
-    {
-      "start": 22.43,
-      "end": 33.43,
-      "transcript": "あとは、なんだろう、恋愛の要素って、文学鑑賞するとき、特にこの後和歌が出てくるとか、そういうときに、ほら、こういうときってこうじゃないって話をしなきゃいけないじゃない?"
-    },
-    {
-      "start": 33.43,
-      "end": 40.43,
-      "transcript": "それは鑑賞の一部だからしようと思っているんだけど、なんかね、多分ね、生徒の反応の方が微妙なのよ。"
-    },
-    {
-      "start": 40.43,
-      "end": 51.43,
-      "transcript": "本人たちは興味があるから、こう授業中にこそこそっと書いてるメモとかをピッとやってみると、なんだか、デートしたいなみたいなこと書いてあって、めちゃくちゃ興味あるのね。"
-    },
-    {
-      "start": 51.43,
-      "end": 56.43,
-      "transcript": "ただ、多分、私から言われるとちょっと聞くんだよね。"
-    },
-    {
-      "start": 56.43,
-      "end": 59.43,
-      "transcript": "それをどうしたらいいのかな。"
-    },
-    {
-      "start": 59.43,
-      "end": 69.43,
-      "transcript": "この間も雑巾色の話題を振って、私がちょっと参考に、この人を砕けた意見だから、こういう意見もまっとうな意見なんだよ。"
-    },
-    {
-      "start": 69.43,
-      "end": 77.43,
-      "transcript": "論点作るときは、これもこういうのありなんだよって思って出した話題が、セクシャルな話題だったのね。"
-    },
-    {
-      "start": 77.43,
-      "end": 81.43,
-      "transcript": "で、やっぱり反応悪いんだ。"
-    },
-    {
-      "start": 81.43,
-      "end": 94.43,
-      "transcript": "興味はあるんだけど、多分すぐ嫌らしくなっちゃって、そんなこと自分が言うのは問題があると思っちゃうんじゃないのかな。"
-    },
-    {
-      "start": 94.43,
-      "end": 102.43,
-      "transcript": "それはあると思う。多分個別だったらそれほど問題。私じゃなくて友達同士だったらあまり問題ないんだろうけど。"
+      "_id": "T29",
+      "end": 186,
+      "start": 123,
+      "text": "分解炉内の輻射コイルには熱膨張を吸収するガイドスリーブが取り付けられているが、この中にスケールが詰まっていたため固定状態となり",
+      "type": "Cause"
     }
-  ]
+  ],
+  "ann_ner_list": [
+    {
+      "_id": "T1",
+      "end": 8,
+      "start": 0,
+      "text": "エチレン製造装置",
+      "type": "Process"
+    },
+    {
+      "_id": "T2",
+      "end": 4,
+      "start": 0,
+      "text": "エチレン",
+      "type": "Product"
+    },
+    {
+      "_id": "T3",
+      "end": 15,
+      "start": 9,
+      "text": "エタン分解炉",
+      "type": "Process"
+    },
+    {
+      "_id": "T4",
+      "end": 12,
+      "start": 9,
+      "text": "エタン",
+      "type": "Product"
+    },
+    {
+      "_id": "T5",
+      "end": 15,
+      "start": 12,
+      "text": "分解炉",
+      "type": "Process"
+    },
+    {
+      "_id": "T6",
+      "end": 24,
+      "start": 16,
+      "text": "デコーキング作業",
+      "type": "Test"
+    },
+    {
+      "_id": "T7",
+      "end": 32,
+      "start": 29,
+      "text": "分解炉",
+      "type": "Process"
+    },
+    {
+      "_id": "T8",
+      "end": 36,
+      "start": 33,
+      "text": "エタン",
+      "type": "Product"
+    },
+    {
+      "_id": "T9",
+      "end": 39,
+      "start": 37,
+      "text": "供給",
+      "type": "Test"
+    },
+    {
+      "_id": "T10",
+      "end": 54,
+      "start": 51,
+      "text": "分解炉",
+      "type": "Process"
+    },
+    {
+      "_id": "T11",
+      "end": 61,
+      "start": 59,
+      "text": "異常",
+      "type": "Incident"
+    },
+    {
+      "_id": "T12",
+      "end": 83,
+      "start": 80,
+      "text": "分解炉",
+      "type": "Process"
+    },
+    {
+      "_id": "T13",
+      "end": 93,
+      "start": 85,
+      "text": "クエンチボイラー",
+      "type": "Process"
+    },
+    {
+      "_id": "T14",
+      "end": 98,
+      "start": 96,
+      "text": "配管",
+      "type": "Process"
+    },
+    {
+      "_id": "T15",
+      "end": 102,
+      "start": 99,
+      "text": "エルボ",
+      "type": "Process"
+    },
+    {
+      "_id": "T16",
+      "end": 108,
+      "start": 107,
+      "text": "炎",
+      "type": "Incident"
+    },
+    {
+      "_id": "T17",
+      "end": 119,
+      "start": 117,
+      "text": "調査",
+      "type": "Chemical"
+    },
+    {
+      "_id": "T18",
+      "end": 126,
+      "start": 123,
+      "text": "分解炉",
+      "type": "Process"
+    },
+    {
+      "_id": "T19",
+      "end": 133,
+      "start": 128,
+      "text": "輻射コイル",
+      "type": "Process"
+    },
+    {
+      "_id": "T20",
+      "end": 138,
+      "start": 135,
+      "text": "熱膨張",
+      "type": "Incident"
+    },
+    {
+      "_id": "T21",
+      "end": 150,
+      "start": 143,
+      "text": "ガイドスリーブ",
+      "type": "Process"
+    },
+    {
+      "_id": "T22",
+      "end": 170,
+      "start": 166,
+      "text": "スケール",
+      "type": "Incident"
+    },
+    {
+      "_id": "T23",
+      "end": 183,
+      "start": 179,
+      "text": "固定状態",
+      "type": "Incident"
+    },
+    {
+      "_id": "T24",
+      "end": 189,
+      "start": 187,
+      "text": "配管",
+      "type": "Process"
+    },
+    {
+      "_id": "T25",
+      "end": 193,
+      "start": 190,
+      "text": "熱膨張",
+      "type": "Incident"
+    },
+    {
+      "_id": "T26",
+      "end": 206,
+      "start": 199,
+      "text": "曲げモーメント",
+      "type": "Incident"
+    },
+    {
+      "_id": "T27",
+      "end": 212,
+      "start": 210,
+      "text": "亀裂",
+      "type": "Incident"
+    }
+  ],
+  "text": "エチレン製造装置のエタン分解炉のデコーキング作業が終了し、分解炉へエタンの供給を開始した。\nしばらくして分解炉出口温度の異常が表示されたので現場を確認したところ、分解炉からクエンチボイラーに至る配管のエルボ溶接部から炎が噴き出していた。調査の結果、\n分解炉内の輻射コイルには熱膨張を吸収するガイドスリーブが取り付けられているが、\nこの中にスケールが詰まっていたため固定状態となり、\n配管に熱膨張による過大な曲げモーメントが作用し亀裂が入ったもの。"
 }
 
 export async function POST(req: NextRequest) {
   let audio;
   let id;
+  let path;
   try {
     const postedData = await req.formData();
-    audio = postedData.get("audio") as Blob;
+    audio = postedData.get("audio") as File;
     id = postedData.get("id") as string;
   } catch (e) {
+    console.log(e);
     return new Response("invalid request", {
       status: 400
     })
   }
 
-  const dataToPost = new FormData();
-  dataToPost.set("job_id", id);
-  dataToPost.set("input", audio);
-  // const res = await fetch(ai_service, {
-  //   method: "POST",
-  //   headers: {
-  //     "accept": "application/json",
-  //   },
-  //   body: dataToPost
-  // });
-  
-  // const json = await res.json();
-  // return new Response(JSON.stringify(json), {
-  //   status: res.status,
-  //   statusText: res.statusText
-  // });
+  try {
+    const bytes = await audio.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    path = `${id}.${audio.name}`;
+    await writeFile(path, buffer);
 
-  await new Promise(resolve => setTimeout(resolve, 15000));
+    const dataToPost = new FormData();
+    dataToPost.set("audio_path", path);
+    const res = await fetch(ai_service, {
+      method: "POST",
+      headers: {
+        "accept": "application/json",
+      },
+      body: dataToPost
+    });
+    await unlink(path)
+    const json = await res.json();
 
-  mock_res.job_id = new Date().toISOString();
-  
-  return new Response(JSON.stringify(mock_res));
+    return new Response(JSON.stringify(json), {
+      status: res.status,
+      statusText: res.statusText
+    });
+  } catch (e) {
+    console.log(e);
+    return new Response("error invoking ai", {
+      status: 500
+    });
+
+  }
+
+  // await new Promise(resolve => setTimeout(resolve, 5000));
+
+  // return new Response(JSON.stringify(mock_res));
 }

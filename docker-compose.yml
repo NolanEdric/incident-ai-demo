@@ -1,17 +1,17 @@
 version: '3.1'
 
 services:
-  # ui:
-  #   build: 
-  #     context: ui
-  #   ports:
-  #     - 0.0.0.0:80:80
-  #   extra_hosts:
-  #     - host.docker.internal:host-gateway
-  #   env_file:
-  #     - .env.server
-  #   volumes:
-  #     - ./assets:/app/assets
+  ui:
+    build: 
+      context: ui
+    ports:
+      - 0.0.0.0:80:80
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    env_file:
+      - .env.server
+    volumes:
+      - ./assets:/app/assets
 
   mongo:
     image: mongo

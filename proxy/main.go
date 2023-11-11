@@ -1,80 +1,71 @@
 package main
 
-import(
-		"log"
-		"fmt"
-		"strings"
-		"context"
-        "net/url"
-        "net/http"
-        "net/http/httputil"
-		"github.com/aws/aws-sdk-go-v2/config"
-		"github.com/aws/aws-sdk-go-v2/service/ec2"
-		"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+import (
+	"context"
+	"fmt"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"log"
+	"net/http"
 )
 
-func isGPUVmDown() bool {
+func GPUVm() (bool, string) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
-		if err != nil {
-		log.Fatal(err)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false, ""
 	}
 
 	tagName := "tag:demo-gpu-vm"
 	input := &ec2.DescribeInstancesInput{
-		Filters: []types.Filter { 
+		Filters: []types.Filter{
 			{
-				Name: &tagName,
-				Values: []string {"true"},
+				Name:   &tagName,
+				Values: []string{"true"},
 			},
 		},
 	}
-	
+
 	client := ec2.NewFromConfig(cfg)
 
 	result, err := client.DescribeInstances(context.TODO(), input)
 	if err != nil {
 		fmt.Println(err.Error())
-		return true
+		return false, ""
 	}
 
 	if len(result.Reservations) == 0 {
-		return true
+		return false, ""
 	}
 
 	if len(result.Reservations[0].Instances) == 0 {
-		return true
+		return false, ""
 	}
 
-	return result.Reservations[0].Instances[0].State.Name != "running"
-	
+	return result.Reservations[0].Instances[0].State.Name == "running", *result.Reservations[0].Instances[0].PrivateIpAddress
+
 	// fmt.Printf("%+v\n", result.Reservations[1].Instances[0].State.Name)
 }
 
 func main() {
-        remote, err := url.Parse("http://localhost:3000")
-        if err != nil {
-                panic(err)
-        }
+	handler := func() func(http.ResponseWriter, *http.Request) {
+		return func(w http.ResponseWriter, r *http.Request) {
+			isUp, privateIp := GPUVm()
+			if isUp {
+				http.Redirect(w, r, fmt.Sprintf("http://%s", privateIp), http.StatusSeeOther)
+			} else {
+				http.FileServer(http.Dir("./out")).ServeHTTP(w, r)
+			}
+		}
+	}
 
-        handler := func(p *httputil.ReverseProxy) func(http.ResponseWriter, *http.Request) {
-                return func(w http.ResponseWriter, r *http.Request) {
-                        r.Host = remote.Host
-						if isGPUVmDown() {
-							if !strings.HasPrefix(r.URL.Path, "/_next") {
-								r.URL.Path = "/down"
-							}
-						}
-                        p.ServeHTTP(w, r)
-                }
-        }
-
-        const portNum string = ":8080"
-        proxy := httputil.NewSingleHostReverseProxy(remote)
-		log.Println("Started on port", portNum)
-    	fmt.Println("To close connection CTRL+C :-)")
-        http.HandleFunc("/", handler(proxy))
-        err = http.ListenAndServe(portNum, nil)
-        if err != nil {
-            panic(err)
-        }
+	const portNum string = ":8080"
+	log.Println("Started on port", portNum)
+	fmt.Println("To close connection CTRL+C :-)")
+	http.HandleFunc("/", handler())
+	err := http.ListenAndServe(portNum, nil)
+	if err != nil {
+		panic(err)
+	}
 }
