@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
   try {
     const bytes = await audio.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    path = `/tmp/${id}.${audio.type}`;
+    path = `/tmp/${id}.${audio.type.split("/")[1]}`;
     await writeFile(path, buffer);
 
     const dataToPost = new FormData();
