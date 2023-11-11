@@ -177,7 +177,7 @@ export default function AiInferResult({
                 url="/brat/brat.html"
                 width={String(windowDimensions.width - convertRemToPixels(2.5))}
                 height={String(
-                  countLines(docData(incident.inference).text) * 75
+                  countLines(docData(incident.inference).text) * 150
                 )}
                 className="custom-pushback"
                 id="result-iframe"
