@@ -52,11 +52,16 @@ function countLines(str: String) {
 
 function docData(incidentResponse: string) {
   let incidentResponseObj = JSON.parse(incidentResponse);
-  let combinedList = [...incidentResponseObj.ann_ce_list, ...incidentResponseObj.ann_ner_list].sort((a,b)=> (parseInt(a._id.substring(1)) > parseInt(b._id.substring(1)) ? 1 : -1));
+  let combinedList = [
+    ...incidentResponseObj.ann_ce_list,
+    ...incidentResponseObj.ann_ner_list,
+  ].sort((a, b) =>
+    parseInt(a._id.substring(1)) > parseInt(b._id.substring(1)) ? 1 : -1
+  );
   const resp = {
     text: incidentResponseObj.text,
-    entities: combinedList.map((e) => [e._id, e.type, [[e.start, e.end]]])
-  }
+    entities: combinedList.map((e) => [e._id, e.type, [[e.start, e.end]]]),
+  };
   // console.log(JSON.stringify(resp));
   return resp;
 }
@@ -73,11 +78,14 @@ function injectData(iframe_id: string, inference: string) {
 }
 
 function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
+  if (typeof window !== "undefined") {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+      width,
+      height,
+    };
+  }
+  return { width: 0, height: 0 };
 }
 
 function convertRemToPixels(rem: number) {
@@ -168,7 +176,9 @@ export default function AiInferResult({
               <Iframe
                 url="/brat/brat.html"
                 width={String(windowDimensions.width - convertRemToPixels(2.5))}
-                height={String(countLines(docData(incident.inference).text) * 75)}
+                height={String(
+                  countLines(docData(incident.inference).text) * 75
+                )}
                 className="custom-pushback"
                 id="result-iframe"
                 onLoad={() =>
