@@ -43,7 +43,7 @@ func GPUVm() (bool, string) {
 		return false, ""
 	}
 
-	return result.Reservations[0].Instances[0].State.Name == "running", *result.Reservations[0].Instances[0].PrivateIpAddress
+	return result.Reservations[0].Instances[0].State.Name == "running", *result.Reservations[0].Instances[0].PublicIpAddress
 
 	// fmt.Printf("%+v\n", result.Reservations[1].Instances[0].State.Name)
 }
@@ -51,9 +51,9 @@ func GPUVm() (bool, string) {
 func main() {
 	handler := func() func(http.ResponseWriter, *http.Request) {
 		return func(w http.ResponseWriter, r *http.Request) {
-			isUp, privateIp := GPUVm()
+			isUp, publicIp := GPUVm()
 			if isUp {
-				http.Redirect(w, r, fmt.Sprintf("http://%s", privateIp), http.StatusSeeOther)
+				http.Redirect(w, r, fmt.Sprintf("http://%s", publicIp), http.StatusSeeOther)
 			} else {
 				http.FileServer(http.Dir("./out")).ServeHTTP(w, r)
 			}
