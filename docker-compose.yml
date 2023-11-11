@@ -4,6 +4,7 @@ services:
   ui:
     build: 
       context: ui
+    restart: always
     ports:
       - 0.0.0.0:80:80
     extra_hosts:
