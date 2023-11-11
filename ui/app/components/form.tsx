@@ -162,7 +162,7 @@ function useContainerDimensions(myRef: any) {
 }
 
 export default function Form({ incident }: { incident: Incident }) {
-  const [voiceIME, setVoiceIME] = React.useState("record");
+  const [voiceIME, setVoiceIME] = React.useState("upload");
   const [getIncident, setIncident] = React.useState(incident);
   const inputContainerRef = React.useRef<HTMLDivElement>(null);
   const [inferenceLoading, setInferenceLoading] = React.useState(false);
