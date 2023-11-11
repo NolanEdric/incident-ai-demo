@@ -11,7 +11,7 @@ import (
 )
 
 func GPUVm() (bool, string) {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-2"))
 	if err != nil {
 		fmt.Println(err.Error())
 		return false, ""
