@@ -1,6 +1,6 @@
 # build context is ..
 
-FROM node:18-alpine AS base-next
+FROM public.ecr.aws/docker/library/node:18-alpine AS base-next
 
 USER root
 
