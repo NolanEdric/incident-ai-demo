@@ -399,8 +399,8 @@ export default function Form({ incident }: { incident: Incident }) {
                         className="block flex-1 border-gray-300 rounded bg-gray-50 p-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
                         onChange={(val) => setVoiceIME(val.target.value)}
                       >
-                        <option value="record">Record</option>
                         <option value="upload">Upload</option>
+                        <option value="record">Record</option>
                       </select>
                     </div>
                     {voiceIME === "record" && (

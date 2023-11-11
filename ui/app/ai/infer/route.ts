@@ -232,7 +232,10 @@ export async function POST(req: NextRequest) {
     const bytes = await audio.arrayBuffer();
     const buffer = Buffer.from(bytes);
     path = `/tmp/${id}.${audio.type.split("/")[1]}`;
-    await writeFile(path, buffer);
+    await writeFile(path, buffer, {
+      encoding: 'binary',
+      mode: 0o777
+    });
 
     const dataToPost = new FormData();
     dataToPost.append("audio_path", path);
