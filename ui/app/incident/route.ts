@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         await mkdir(audio_storage_path);
       }
       await writeFile(path, buffer);
-      i.audio = `/incident/${i.id}/api/audio?ext=${file.name}`;
+      i.audio = `/incident/${i.id}/api/audio?ext=${file.type.split("/")[1]}`;
       i.title = data.get('title')?.toString() || null;
       i.nearMissType = data.get('nearMissType')?.toString() || null;
       i.concernType = data.get('concernType')?.toString() || null;
