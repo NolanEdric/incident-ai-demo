@@ -4,7 +4,7 @@ services:
   proxy:
     build: 
       context: ..
-      dockerfile: ./Dockerfile
+      dockerfile: proxy/Dockerfile
     restart: always
     ports:
       - 0.0.0.0:80:8080
