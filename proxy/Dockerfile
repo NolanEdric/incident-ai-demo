@@ -17,7 +17,7 @@ COPY static-ui .
 
 RUN yarn build
 
-FROM golang:1.21-alpine as builder-go
+FROM public.ecr.aws/docker/library/golang:1.21-alpine as builder-go
 
 WORKDIR /app
 
@@ -28,7 +28,7 @@ COPY proxy/*.go ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o incident-ai-demo-proxy
 
-FROM alpine as runner
+FROM public.ecr.aws/docker/library/alpine as runner
 
 WORKDIR /app
 
