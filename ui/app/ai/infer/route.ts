@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
   try {
     const bytes = await audio.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    path = `/tmp/${id}.${audio.type.split("/")[1]}`;
+    path = `/tmp/incident-ai-demo/${id}.${audio.type.split("/")[1]}`;
     await writeFile(path, buffer, {
       encoding: 'binary',
       mode: 0o777

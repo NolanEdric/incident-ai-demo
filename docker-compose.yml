@@ -12,6 +12,7 @@ services:
       - .env.server
     volumes:
       - ./assets:/app/assets
+      - /tmp/incident-ai-demo:/tmp/incident-ai-demo
 
   mongo:
     image: mongo
