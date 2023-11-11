@@ -231,11 +231,11 @@ export async function POST(req: NextRequest) {
   try {
     const bytes = await audio.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    path = `${id}.${audio.name}`;
+    path = `/tmp/${id}.${audio.type}`;
     await writeFile(path, buffer);
 
     const dataToPost = new FormData();
-    dataToPost.set("audio_path", path);
+    dataToPost.append("audio_path", path);
     const res = await fetch(ai_service, {
       method: "POST",
       headers: {
