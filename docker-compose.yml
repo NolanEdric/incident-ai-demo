@@ -1,12 +1,21 @@
 version: '3.1'
 
 services:
+  nginx:
+    image: public.ecr.aws/nginx/nginx:1.25
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./assets/rossa-incident-ai:/home/ubuntu/projects/rossa-incident-ai/data/demo_samples
+    depends_on:
+      - ui
+
   ui:
     build: 
       context: ui
     restart: always
-    ports:
-      - 0.0.0.0:80:80
     extra_hosts:
       - host.docker.internal:host-gateway
     env_file:
@@ -14,12 +23,12 @@ services:
     volumes:
       - ./assets:/app/assets
       - /tmp/incident-ai-demo:/tmp/incident-ai-demo
+    depends_on:
+      - mongo
 
   mongo:
-    image: mongo
+    image: public.ecr.aws/docker/library/mongo:6-jammy
     restart: always
-    # ports:
-    #   - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example

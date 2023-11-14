@@ -327,7 +327,30 @@ export default function Form({ incident }: { incident: Incident }) {
               </div>
               <div className="mt-5">
                 <label className="block text-base font-medium leading-6 text-gray-900">
-                  Describe incident by voice
+                  Describe incident (
+                  <a
+                    href="/demo_samples/"
+                    target="_blank"
+                    className="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    Demo samples
+                    <svg
+                      className="w-4 h-4 ms-2 rtl:rotate-180"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 14 10"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M1 5h12m0 0L9 1m4 4L9 9"
+                      />
+                    </svg>
+                  </a>
+                  )
                 </label>
                 {getIncident.audio ? (
                   <div className="my-2">
