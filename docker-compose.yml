@@ -8,7 +8,7 @@ services:
       - 8080:80
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./assets/rossa-incident-ai:/home/ubuntu/projects/rossa-incident-ai/data/demo_samples
+      - /home/ubuntu/projects/rossa-incident-ai/data/demo_samples:/home/ubuntu/projects/rossa-incident-ai/data/demo_samples
     depends_on:
       - ui
 
