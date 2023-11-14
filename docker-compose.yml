@@ -27,7 +27,7 @@ services:
       - mongo
 
   mongo:
-    image: public.ecr.aws/docker/library/mongo:6-jammy
+    image: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
